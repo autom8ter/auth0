@@ -5,6 +5,8 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"context"
+	"net/url"
+	"strings"
 )
 
 type OAuth2Client struct {
@@ -108,8 +110,14 @@ func (c *OAuth2Client) Context() context.Context {
 	return c.ctx
 }
 
-func (c *OAuth2Client) HTTP(t *oauth2.Token) *http.Client {
-	return c.cfg.Client(c.Context(), t)
+func (c *OAuth2Client) HTTP(r *http.Request) (*http.Client, error) {
+	code := r.URL.Query().Get("code")
+
+	t, err := c.cfg.Exchange(context.TODO(), code)
+	if err != nil {
+		return nil, err
+	}
+	return c.cfg.Client(c.Context(), t), nil
 }
 
 func (c *OAuth2Client) ClientID() string {
@@ -136,3 +144,43 @@ func (c *OAuth2Client) AuthURL() string {
 	return c.cfg.Endpoint.AuthURL
 }
 
+
+func (c *OAuth2Client) Do(callback *http.Request, apiReq *http.Request) (*http.Response, error){
+	cli, err := c.HTTP(callback)
+	if err != nil {
+		return nil, err
+	}
+	return cli.Do(apiReq)
+}
+
+func (c *OAuth2Client) Post(callback *http.Request, uRL string, obj interface{}) (*http.Response, error) {
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.MarshalJSON(obj))))
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(callback, req)
+}
+
+func (c *OAuth2Client) PostForm(callback *http.Request, uRL string, formValues url.Values) (*http.Response, error) {
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(formValues.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(callback, req)
+}
+
+func (c *OAuth2Client) Get(callback *http.Request, uRL string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", uRL, nil)
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(callback, req)
+}
+
+func (c *OAuth2Client) Delete(callback *http.Request, uRL string) (*http.Response, error) {
+	req, err := http.NewRequest("DELETE", uRL, nil)
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(callback, req)
+}

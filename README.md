@@ -267,10 +267,22 @@ func (c *OAuth2Client) Context() context.Context
 func (c *OAuth2Client) CustomDomainsURL() string
 ```
 
+#### func (*OAuth2Client) Delete
+
+```go
+func (c *OAuth2Client) Delete(callback *http.Request, uRL string) (*http.Response, error)
+```
+
 #### func (*OAuth2Client) DeviceCredentialsURL
 
 ```go
 func (c *OAuth2Client) DeviceCredentialsURL() string
+```
+
+#### func (*OAuth2Client) Do
+
+```go
+func (c *OAuth2Client) Do(callback *http.Request, apiReq *http.Request) (*http.Response, error)
 ```
 
 #### func (*OAuth2Client) Domain
@@ -291,6 +303,12 @@ func (c *OAuth2Client) EmailTemplatesURL() string
 func (c *OAuth2Client) EmailsURL() string
 ```
 
+#### func (*OAuth2Client) Get
+
+```go
+func (c *OAuth2Client) Get(callback *http.Request, uRL string) (*http.Response, error)
+```
+
 #### func (*OAuth2Client) GrantsURL
 
 ```go
@@ -300,7 +318,7 @@ func (c *OAuth2Client) GrantsURL() string
 #### func (*OAuth2Client) HTTP
 
 ```go
-func (c *OAuth2Client) HTTP(t *oauth2.Token) *http.Client
+func (c *OAuth2Client) HTTP(r *http.Request) (*http.Client, error)
 ```
 
 #### func (*OAuth2Client) JWKSURL
@@ -313,6 +331,18 @@ func (c *OAuth2Client) JWKSURL() string
 
 ```go
 func (c *OAuth2Client) LogsURL() string
+```
+
+#### func (*OAuth2Client) Post
+
+```go
+func (c *OAuth2Client) Post(callback *http.Request, uRL string, obj interface{}) (*http.Response, error)
+```
+
+#### func (*OAuth2Client) PostForm
+
+```go
+func (c *OAuth2Client) PostForm(callback *http.Request, uRL string, formValues url.Values) (*http.Response, error)
 ```
 
 #### func (*OAuth2Client) RolesURL
