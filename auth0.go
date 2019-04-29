@@ -3,83 +3,101 @@
 package auth0
 
 import (
-	"fmt"
-	"github.com/autom8ter/auth0/endpoints"
-	"io/ioutil"
+	"context"
+	"github.com/autom8ter/objectify"
+	"golang.org/x/oauth2/clientcredentials"
 	"net/http"
 	"net/url"
 	"strings"
-	"github.com/autom8ter/objectify"
-	"golang.org/x/oauth2"
 )
 
 var util = objectify.Default()
 
 type Client struct {
-	ClientID string	`validate:"required"`
-	ClientSecret string `validate:"required"`
 	Domain string `validate:"required"`
-	Scopes []string `validate:"required"`
-	cli *http.Client
+	cfg *clientcredentials.Config
+	ctx context.Context
 }
 
-func NewClient(clientID string, clientSecret string, domain string, managementToken string, cli *http.Client) *Client {
-	if cli == nil {
-		cli = http.DefaultClient
+func NewClient(clientID string, clientSecret string, domain string, scopes []string) *Client {
+	return &Client{
+		Domain: domain,
+		cfg: &clientcredentials.Config{
+			ClientID:     clientID,
+			ClientSecret: clientSecret,
+			TokenURL: "https://" + domain + "/oauth/token",
+			Scopes:       scopes,
+		},
 	}
-	return &Client{ClientID: clientID, ClientSecret: clientSecret, Domain: domain, ManagementToken: managementToken, cli: cli}
 }
 
 func (c *Client) Validate() error {
 	return util.Validate(c)
 }
 
-func (c *Client) do(req *http.Request, contentType string) (*http.Response, error){
-	req.Header.Add("content-type", contentType)
-	return c.cli.Do(req)
+func (c *Client) Do(req *http.Request) (*http.Response, error){
+	return c.HTTP().Do(req)
 }
 
-func (c *Client) post(u string, obj interface{}) (*http.Response, error) {
-	req, err := http.NewRequest("POST", u, strings.NewReader(string(util.MarshalJSON(obj))))
+func (c *Client) Post(uRL string, obj interface{}) (*http.Response, error) {
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.MarshalJSON(obj))))
 	if err != nil {
 		return nil, err
 	}
-	return c.do(req, "application/json")
+	return c.Do(req)
 }
 
-func (c *Client) postForm(formValues url.Values, u string) (*http.Response, error) {
-	req, err := http.NewRequest("POST", u, strings.NewReader(formValues.Encode()))
+func (c *Client) PostForm(uRL string, formValues url.Values) (*http.Response, error) {
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(formValues.Encode()))
 	if err != nil {
 		return nil, err
 	}
-	return c.do(req, "application/x-www-form-urlencoded")
+	return c.Do(req)
 }
 
-func (c *Client) get(u string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", u, nil)
+func (c *Client) Get(uRL string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", uRL, nil)
 	if err != nil {
 		return nil, err
 	}
-	return c.do(req, "application/json")
+	return c.Do(req)
 }
 
-func (c *Client) delete(u string) (*http.Response, error) {
-	req, err := http.NewRequest("DELETE", u, nil)
+func (c *Client) Delete(uRL string) (*http.Response, error) {
+	req, err := http.NewRequest("DELETE", uRL, nil)
 	if err != nil {
 		return nil, err
 	}
-	return c.do(req, "application/json")
+	return c.Do(req)
 }
 
-func (c *Client) OAuth2Config(redirect string) *oauth2.Config{
-	return &oauth2.Config{
-		ClientID:     c.ClientID,
-		ClientSecret: c.ClientSecret,
-		RedirectURL:  redirect,
-		Scopes:       c.Scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://" + c.Domain + "/authorize",
-			TokenURL: "https://" + c.Domain + "/oauth/token",
-		},
+func (c *Client) AddScopes(scopes ...string){
+	c.cfg.Scopes =append(c.cfg.Scopes, scopes...)
+}
+
+func (c *Client) SetContext(ctx context.Context){
+	c.ctx = ctx
+}
+
+func (c *Client) Context() context.Context {
+	if c.ctx == nil {
+		c.ctx = context.TODO()
 	}
+	return c.ctx
+}
+
+func (c *Client) HTTP() *http.Client {
+	return c.cfg.Client(c.Context())
+}
+
+func (c *Client) ClientID() string {
+	return c.cfg.ClientID
+}
+
+func (c *Client) ClientSecret() string {
+	return c.cfg.ClientSecret
+}
+
+func (c *Client) TokenURL() string {
+	return c.cfg.TokenURL
 }
