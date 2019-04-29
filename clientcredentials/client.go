@@ -1,23 +1,21 @@
 //go:generate godocdown -o README.md
 
-package auth0
+package clientcredentials
 
 import (
 	"context"
 	"github.com/autom8ter/auth0/endpoints"
-	"github.com/autom8ter/objectify"
+	"github.com/autom8ter/auth0/util"
 	"golang.org/x/oauth2/clientcredentials"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-var util = objectify.Default()
-
 type Client struct {
 	domain string
-	cfg *clientcredentials.Config
-	ctx context.Context
+	cfg    *clientcredentials.Config
+	ctx    context.Context
 }
 
 func NewClient(ctx context.Context, clientID string, clientSecret string, domain string, scopes []string) *Client {
@@ -33,12 +31,12 @@ func NewClient(ctx context.Context, clientID string, clientSecret string, domain
 	}
 }
 
-func (c *Client) Do(req *http.Request) (*http.Response, error){
+func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	return c.HTTP().Do(req)
 }
 
 func (c *Client) Post(uRL string, obj interface{}) (*http.Response, error) {
-	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.MarshalJSON(obj))))
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.Util.MarshalJSON(obj))))
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +67,11 @@ func (c *Client) Delete(uRL string) (*http.Response, error) {
 	return c.Do(req)
 }
 
-func (c *Client) AddScopes(scopes ...string){
-	c.cfg.Scopes =append(c.cfg.Scopes, scopes...)
+func (c *Client) AddScopes(scopes ...string) {
+	c.cfg.Scopes = append(c.cfg.Scopes, scopes...)
 }
 
-func (c *Client) SetContext(ctx context.Context){
+func (c *Client) SetContext(ctx context.Context) {
 	c.ctx = ctx
 }
 

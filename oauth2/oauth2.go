@@ -1,18 +1,22 @@
-package auth0
+//go:generate godocdown -o README.md
+
+package oauth2
 
 import (
+	"context"
 	"github.com/autom8ter/auth0/endpoints"
+	"github.com/autom8ter/auth0/util"
 	"golang.org/x/oauth2"
 	"net/http"
-	"context"
 	"net/url"
 	"strings"
 )
 
 type OAuth2Client struct {
-	domain string
-	cfg    *oauth2.Config
-	ctx context.Context
+	domain          string
+	cfg             *oauth2.Config
+	callbackRequest *http.Request
+	ctx             context.Context
 }
 
 func (c *OAuth2Client) UserInfoURL() string {
@@ -83,9 +87,9 @@ func (c *OAuth2Client) TenantsURL() string {
 	return endpoints.TenantsURL(c.domain)
 }
 
-func NewOAuth2Client(ctx context.Context, domain, clientID, clientSecret, redirect string, scopes []string) *OAuth2Client {
+func NewOAuth2Client(ctx context.Context, domain, clientID, clientSecret, redirect string, scopes []string, callbackRequest *http.Request) *OAuth2Client {
 	if ctx == nil {
-		ctx  = context.TODO()
+		ctx = context.TODO()
 	}
 	return &OAuth2Client{
 		domain: domain,
@@ -96,22 +100,23 @@ func NewOAuth2Client(ctx context.Context, domain, clientID, clientSecret, redire
 				AuthURL:  "https://" + domain + "/authorize",
 				TokenURL: "https://" + domain + "/oauth/token",
 			},
-			RedirectURL:  redirect,
-			Scopes:       scopes,
+			RedirectURL: redirect,
+			Scopes:      scopes,
 		},
-		ctx: ctx,
+		callbackRequest: callbackRequest,
+		ctx:             ctx,
 	}
 }
 
 func (c *OAuth2Client) Context() context.Context {
 	if c.ctx == nil {
-		c.ctx  = context.TODO()
+		c.ctx = context.TODO()
 	}
 	return c.ctx
 }
 
-func (c *OAuth2Client) HTTP(r *http.Request) (*http.Client, error) {
-	code := r.URL.Query().Get("code")
+func (c *OAuth2Client) HTTP() (*http.Client, error) {
+	code := c.callbackRequest.URL.Query().Get("code")
 
 	t, err := c.cfg.Exchange(context.TODO(), code)
 	if err != nil {
@@ -144,43 +149,42 @@ func (c *OAuth2Client) AuthURL() string {
 	return c.cfg.Endpoint.AuthURL
 }
 
-
-func (c *OAuth2Client) Do(callback *http.Request, apiReq *http.Request) (*http.Response, error){
-	cli, err := c.HTTP(callback)
+func (c *OAuth2Client) Do(apiReq *http.Request) (*http.Response, error) {
+	cli, err := c.HTTP()
 	if err != nil {
 		return nil, err
 	}
 	return cli.Do(apiReq)
 }
 
-func (c *OAuth2Client) Post(callback *http.Request, uRL string, obj interface{}) (*http.Response, error) {
-	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.MarshalJSON(obj))))
+func (c *OAuth2Client) Post(uRL string, obj interface{}) (*http.Response, error) {
+	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.Util.MarshalJSON(obj))))
 	if err != nil {
 		return nil, err
 	}
-	return c.Do(callback, req)
+	return c.Do(req)
 }
 
-func (c *OAuth2Client) PostForm(callback *http.Request, uRL string, formValues url.Values) (*http.Response, error) {
+func (c *OAuth2Client) PostForm(uRL string, formValues url.Values) (*http.Response, error) {
 	req, err := http.NewRequest("POST", uRL, strings.NewReader(formValues.Encode()))
 	if err != nil {
 		return nil, err
 	}
-	return c.Do(callback, req)
+	return c.Do(req)
 }
 
-func (c *OAuth2Client) Get(callback *http.Request, uRL string) (*http.Response, error) {
+func (c *OAuth2Client) Get(uRL string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", uRL, nil)
 	if err != nil {
 		return nil, err
 	}
-	return c.Do(callback, req)
+	return c.Do(req)
 }
 
-func (c *OAuth2Client) Delete(callback *http.Request, uRL string) (*http.Response, error) {
+func (c *OAuth2Client) Delete(uRL string) (*http.Response, error) {
 	req, err := http.NewRequest("DELETE", uRL, nil)
 	if err != nil {
 		return nil, err
 	}
-	return c.Do(callback, req)
+	return c.Do(req)
 }

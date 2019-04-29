@@ -5,6 +5,7 @@ github.com/Masterminds/semver v1.4.2 h1:WBLTQ37jOCzSLtXNdoo8bNM8876KhNqOKvrlGITg
 github.com/Masterminds/semver v1.4.2/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/Masterminds/sprig v2.18.0+incompatible h1:QoGhlbC6pter1jxKnjMFxT8EqsLuDE6FEcNbWEpw+lI=
 github.com/Masterminds/sprig v2.18.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuNhlNS5hqE0NB0E6fgfo2Br3o=
+github.com/autom8ter/gosaas v0.0.0-20190428070141-228ef91d5619 h1:ouqQ8BW9Byg+shNLTUL+EHw06x6MAeOVjIlgANvwpEk=
 github.com/autom8ter/objectify v0.0.0-20190422234248-2629fc698124 h1:07J3AV7/be8wcUM5KlDKjAa1Mk7fr2vWwnzQHAKeYLw=
 github.com/autom8ter/objectify v0.0.0-20190422234248-2629fc698124/go.mod h1:Hg+n5d+Qj3M0I+vnIo+009AoX2qzOtQJ20UVHYnjF3Q=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -2,28 +2,6 @@
 
 package endpoints
 
-type API interface {
-	TokenURL() string
-	UserInfoURL() string
-	UsersURL() string
-	AuthURL() string
-	SearchUsersURL() string
-	RolesURL() string
-	LogsURL() string
-	GrantsURL() string
-	StatsURL() string
-	ClientsURL() string
-	JWKSURL() string
-	EmailsURL()string
-	DeviceCredentialsURL() string
-	RulesURL() string
-	CustomDomainsURL() string
-	ConnectionsURL()string
-	ClientGrantsURL()string
-	EmailTemplatesURL()string
-	TenantsURL()string
-}
-
 func TokenURL(domain string) string {
 	return "https://" + domain + "/oauth/token"
 }
