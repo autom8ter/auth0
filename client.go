@@ -4,6 +4,7 @@ package auth0
 
 import (
 	"context"
+	"github.com/autom8ter/auth0/endpoints"
 	"github.com/autom8ter/objectify"
 	"golang.org/x/oauth2/clientcredentials"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 var util = objectify.Default()
 
 type Client struct {
-	domain string `validate:"required"`
+	domain string
 	cfg *clientcredentials.Config
 	ctx context.Context
 }
@@ -30,10 +31,6 @@ func NewClient(ctx context.Context, clientID string, clientSecret string, domain
 		},
 		ctx: ctx,
 	}
-}
-
-func (c *Client) Validate() error {
-	return util.Validate(c)
 }
 
 func (c *Client) Do(req *http.Request) (*http.Response, error){
@@ -109,4 +106,72 @@ func (c *Client) Scopes() []string {
 
 func (c *Client) Domain() string {
 	return c.domain
+}
+
+func (c *Client) UserInfoURL() string {
+	return endpoints.UserInfoURL(c.domain)
+}
+
+func (c *Client) UsersURL() string {
+	return endpoints.UsersURL(c.domain)
+}
+
+func (c *Client) SearchUsersURL() string {
+	return endpoints.SearchUsersURL(c.domain)
+}
+
+func (c *Client) RolesURL() string {
+	return endpoints.RolesURL(c.domain)
+}
+
+func (c *Client) LogsURL() string {
+	return endpoints.LogsURL(c.domain)
+}
+
+func (c *Client) GrantsURL() string {
+	return endpoints.GrantsURL(c.domain)
+}
+
+func (c *Client) StatsURL() string {
+	return endpoints.StatsURL(c.domain)
+}
+
+func (c *Client) ClientsURL() string {
+	return endpoints.ClientsURL(c.domain)
+}
+
+func (c *Client) JWKSURL() string {
+	return endpoints.JWKSURL(c.domain)
+}
+
+func (c *Client) EmailsURL() string {
+	return endpoints.EmailURL(c.domain)
+}
+
+func (c *Client) DeviceCredentialsURL() string {
+	return endpoints.DeviceCredentials(c.domain)
+}
+
+func (c *Client) RulesURL() string {
+	return endpoints.RulesURL(c.domain)
+}
+
+func (c *Client) CustomDomainsURL() string {
+	return endpoints.CustomDomainsURL(c.domain)
+}
+
+func (c *Client) ConnectionsURL() string {
+	return endpoints.ConnectionsURL(c.domain)
+}
+
+func (c *Client) ClientGrantsURL() string {
+	return endpoints.ClientGrantsURL(c.domain)
+}
+
+func (c *Client) EmailTemplatesURL() string {
+	return endpoints.EmailTemplateURL(c.domain)
+}
+
+func (c *Client) TenantsURL() string {
+	return endpoints.TenantsURL(c.domain)
 }
