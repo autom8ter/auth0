@@ -12,86 +12,86 @@ import (
 	"strings"
 )
 
-type OAuth2Client struct {
+type Client struct {
 	domain          string
 	cfg             *oauth2.Config
 	callbackRequest *http.Request
 	ctx             context.Context
 }
 
-func (c *OAuth2Client) UserInfoURL() string {
+func (c *Client) UserInfoURL() string {
 	return endpoints.UserInfoURL(c.domain)
 }
 
-func (c *OAuth2Client) UsersURL() string {
+func (c *Client) UsersURL() string {
 	return endpoints.UsersURL(c.domain)
 }
 
-func (c *OAuth2Client) SearchUsersURL() string {
+func (c *Client) SearchUsersURL() string {
 	return endpoints.SearchUsersURL(c.domain)
 }
 
-func (c *OAuth2Client) RolesURL() string {
+func (c *Client) RolesURL() string {
 	return endpoints.RolesURL(c.domain)
 }
 
-func (c *OAuth2Client) LogsURL() string {
+func (c *Client) LogsURL() string {
 	return endpoints.LogsURL(c.domain)
 }
 
-func (c *OAuth2Client) GrantsURL() string {
+func (c *Client) GrantsURL() string {
 	return endpoints.GrantsURL(c.domain)
 }
 
-func (c *OAuth2Client) StatsURL() string {
+func (c *Client) StatsURL() string {
 	return endpoints.StatsURL(c.domain)
 }
 
-func (c *OAuth2Client) ClientsURL() string {
+func (c *Client) ClientsURL() string {
 	return endpoints.ClientsURL(c.domain)
 }
 
-func (c *OAuth2Client) JWKSURL() string {
+func (c *Client) JWKSURL() string {
 	return endpoints.JWKSURL(c.domain)
 }
 
-func (c *OAuth2Client) EmailsURL() string {
+func (c *Client) EmailsURL() string {
 	return endpoints.EmailURL(c.domain)
 }
 
-func (c *OAuth2Client) DeviceCredentialsURL() string {
+func (c *Client) DeviceCredentialsURL() string {
 	return endpoints.DeviceCredentials(c.domain)
 }
 
-func (c *OAuth2Client) RulesURL() string {
+func (c *Client) RulesURL() string {
 	return endpoints.RulesURL(c.domain)
 }
 
-func (c *OAuth2Client) CustomDomainsURL() string {
+func (c *Client) CustomDomainsURL() string {
 	return endpoints.CustomDomainsURL(c.domain)
 }
 
-func (c *OAuth2Client) ConnectionsURL() string {
+func (c *Client) ConnectionsURL() string {
 	return endpoints.ConnectionsURL(c.domain)
 }
 
-func (c *OAuth2Client) ClientGrantsURL() string {
+func (c *Client) ClientGrantsURL() string {
 	return endpoints.ClientGrantsURL(c.domain)
 }
 
-func (c *OAuth2Client) EmailTemplatesURL() string {
+func (c *Client) EmailTemplatesURL() string {
 	return endpoints.EmailTemplateURL(c.domain)
 }
 
-func (c *OAuth2Client) TenantsURL() string {
+func (c *Client) TenantsURL() string {
 	return endpoints.TenantsURL(c.domain)
 }
 
-func NewOAuth2Client(ctx context.Context, domain, clientID, clientSecret, redirect string, scopes []string, callbackRequest *http.Request) *OAuth2Client {
+func NewClient(ctx context.Context, domain, clientID, clientSecret, redirect string, scopes []string, callbackRequest *http.Request) *Client {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
-	return &OAuth2Client{
+	return &Client{
 		domain: domain,
 		cfg: &oauth2.Config{
 			ClientID:     clientID,
@@ -108,14 +108,14 @@ func NewOAuth2Client(ctx context.Context, domain, clientID, clientSecret, redire
 	}
 }
 
-func (c *OAuth2Client) Context() context.Context {
+func (c *Client) Context() context.Context {
 	if c.ctx == nil {
 		c.ctx = context.TODO()
 	}
 	return c.ctx
 }
 
-func (c *OAuth2Client) HTTP() (*http.Client, error) {
+func (c *Client) HTTP() (*http.Client, error) {
 	code := c.callbackRequest.URL.Query().Get("code")
 
 	t, err := c.cfg.Exchange(context.TODO(), code)
@@ -125,31 +125,31 @@ func (c *OAuth2Client) HTTP() (*http.Client, error) {
 	return c.cfg.Client(c.Context(), t), nil
 }
 
-func (c *OAuth2Client) ClientID() string {
+func (c *Client) ClientID() string {
 	return c.cfg.ClientID
 }
 
-func (c *OAuth2Client) ClientSecret() string {
+func (c *Client) ClientSecret() string {
 	return c.cfg.ClientSecret
 }
 
-func (c *OAuth2Client) Scopes() []string {
+func (c *Client) Scopes() []string {
 	return c.cfg.Scopes
 }
 
-func (c *OAuth2Client) Domain() string {
+func (c *Client) Domain() string {
 	return c.domain
 }
 
-func (c *OAuth2Client) TokenURL() string {
+func (c *Client) TokenURL() string {
 	return c.cfg.Endpoint.TokenURL
 }
 
-func (c *OAuth2Client) AuthURL() string {
+func (c *Client) AuthURL() string {
 	return c.cfg.Endpoint.AuthURL
 }
 
-func (c *OAuth2Client) Do(apiReq *http.Request) (*http.Response, error) {
+func (c *Client) Do(apiReq *http.Request) (*http.Response, error) {
 	cli, err := c.HTTP()
 	if err != nil {
 		return nil, err
@@ -157,7 +157,7 @@ func (c *OAuth2Client) Do(apiReq *http.Request) (*http.Response, error) {
 	return cli.Do(apiReq)
 }
 
-func (c *OAuth2Client) Post(uRL string, obj interface{}) (*http.Response, error) {
+func (c *Client) Post(uRL string, obj interface{}) (*http.Response, error) {
 	req, err := http.NewRequest("POST", uRL, strings.NewReader(string(util.Util.MarshalJSON(obj))))
 	if err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ func (c *OAuth2Client) Post(uRL string, obj interface{}) (*http.Response, error)
 	return c.Do(req)
 }
 
-func (c *OAuth2Client) PostForm(uRL string, formValues url.Values) (*http.Response, error) {
+func (c *Client) PostForm(uRL string, formValues url.Values) (*http.Response, error) {
 	req, err := http.NewRequest("POST", uRL, strings.NewReader(formValues.Encode()))
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ func (c *OAuth2Client) PostForm(uRL string, formValues url.Values) (*http.Respon
 	return c.Do(req)
 }
 
-func (c *OAuth2Client) Get(uRL string) (*http.Response, error) {
+func (c *Client) Get(uRL string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", uRL, nil)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (c *OAuth2Client) Get(uRL string) (*http.Response, error) {
 	return c.Do(req)
 }
 
-func (c *OAuth2Client) Delete(uRL string) (*http.Response, error) {
+func (c *Client) Delete(uRL string) (*http.Response, error) {
 	req, err := http.NewRequest("DELETE", uRL, nil)
 	if err != nil {
 		return nil, err

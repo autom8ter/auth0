@@ -25,6 +25,12 @@ func NewClient(ctx context.Context, clientID string, clientSecret string, domain
 func (c *Client) AddScopes(scopes ...string)
 ```
 
+#### func (*Client) AuthURL
+
+```go
+func (c *Client) AuthURL() string
+```
+
 #### func (*Client) ClientGrantsURL
 
 ```go

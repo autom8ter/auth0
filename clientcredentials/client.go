@@ -18,6 +18,10 @@ type Client struct {
 	ctx    context.Context
 }
 
+func (c *Client) AuthURL() string {
+	return endpoints.AuthURL(c.domain)
+}
+
 func NewClient(ctx context.Context, clientID string, clientSecret string, domain string, scopes []string) *Client {
 	return &Client{
 		domain: domain,
