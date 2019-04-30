@@ -18,7 +18,7 @@ func AuthURL(domain string) string {
 	return "https://" + domain + "/authorize"
 }
 
-func SearchUsersURL(domain string) string {
+func UserByEmailURL(domain string) string {
 	return "https://" + domain + "/api/v2/users-by-email"
 }
 

@@ -163,12 +163,6 @@ func (c *Client) RulesURL() string
 func (c *Client) Scopes() []string
 ```
 
-#### func (*Client) SearchUsersURL
-
-```go
-func (c *Client) SearchUsersURL() string
-```
-
 #### func (*Client) StatsURL
 
 ```go
@@ -185,6 +179,12 @@ func (c *Client) TenantsURL() string
 
 ```go
 func (c *Client) TokenURL() string
+```
+
+#### func (*Client) UserByEmailURL
+
+```go
+func (c *Client) UserByEmailURL() string
 ```
 
 #### func (*Client) UserInfoURL

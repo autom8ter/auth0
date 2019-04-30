@@ -83,12 +83,6 @@ func RolesURL(domain string) string
 func RulesURL(domain string) string
 ```
 
-#### func  SearchUsersURL
-
-```go
-func SearchUsersURL(domain string) string
-```
-
 #### func  StatsURL
 
 ```go
@@ -105,6 +99,12 @@ func TenantsURL(domain string) string
 
 ```go
 func TokenURL(domain string) string
+```
+
+#### func  UserByEmailURL
+
+```go
+func UserByEmailURL(domain string) string
 ```
 
 #### func  UserInfoURL

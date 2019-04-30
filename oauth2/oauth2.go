@@ -27,8 +27,8 @@ func (c *Client) UsersURL() string {
 	return endpoints.UsersURL(c.domain)
 }
 
-func (c *Client) SearchUsersURL() string {
-	return endpoints.SearchUsersURL(c.domain)
+func (c *Client) UserByEmailURL() string {
+	return endpoints.UserByEmailURL(c.domain)
 }
 
 func (c *Client) RolesURL() string {
@@ -162,6 +162,7 @@ func (c *Client) Post(uRL string, obj interface{}) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Set("Content-Type", "application/json")
 	return c.Do(req)
 }
 

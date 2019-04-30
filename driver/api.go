@@ -12,7 +12,7 @@ type API interface {
 	UserInfoURL() string
 	UsersURL() string
 	AuthURL() string
-	SearchUsersURL() string
+	UserByEmailURL() string
 	RolesURL() string
 	LogsURL() string
 	GrantsURL() string
